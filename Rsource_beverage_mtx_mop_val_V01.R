@@ -19,6 +19,7 @@ dt$para$main = paste0(dt$para$beverage, " in ", dt$para$location, ", line ", dt$
 
 # Modellerstellung
 dir( paste0( dt$wd, "/", "/Modellerstellung"))
+dir()
 dt$para$model.raw.date <- c("220614")
 dt$para$model.raw.pl <- c("00300")
 dt$para$wl1 <- c(190)
@@ -45,11 +46,11 @@ dt$para$eingriff <- data.frame( TA = c(24.67, 26.73)
                                 , Acesulfam = c(87.23, 92.63)
                                 )
 
-dt$para$sperr <- data.frame( TA = c(dt$para$SOLL[ 1 ] - .4, dt$para$SOLL[ 1 ] + .4)
-                             , Coffein = c(dt$para$SOLL[ 2 ] - 10, dt$para$SOLL[ 2 ] + 10)
+dt$para$sperr <- data.frame( TA = c(NA, NA)
+                             , Coffein = c(NA, NA)
                              , Aspartam = c(NA, NA )
                              , Acesulfam = c(NA, NA)
-                             )
+)
 #
 # # Modelloptimierung
 dir( paste0( dt$wd, "/", "/Modelloptimierung") )

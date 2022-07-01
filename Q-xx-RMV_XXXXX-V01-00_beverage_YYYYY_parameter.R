@@ -88,7 +88,7 @@ for(i in 1:length(dt$pred)){
 # Modell name ####
 setwd(dt$wd)
 setwd(paste0("./Mastermodell_", dt$para$model.raw.pl))
-dt$para$model.name <- grep("41", grep(  "Sre" , dir(), value = T), value = T)
+dt$para$model.name <- grep("41", grep(  dt$para$substance[dt$para$i] , dir(), value = T), value = T)
 dt$para$model.name
 dt$para$model.name <- dt$para$model.name[length(dt$para$model.name)]
 dt$para$model.name <- gsub(".41M", "", dt$para$model.name)

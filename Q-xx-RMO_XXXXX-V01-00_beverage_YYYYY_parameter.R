@@ -49,9 +49,10 @@ matplot(dt$para$wl[[1]]
 legend("topright", c(paste0("SL ", dt$para$substance[ dt$para$i]), "Ausmischung"), lty = 1, col = c("blue", "red"))
 
 # PLS para ####
+dt$para.pls$wl <- 200:260
 dt$model.raw$data$Probe == dt$para$substance[dt$para$i]
-dt$para.pls$wlr <- wlr_function(200:300, 200:300, 10); nrow(dt$para.pls$wlr)
-dt$para.pls$wlm <- wlr_function_multi(200:300, 200:300, 10); nrow(dt$para.pls$wlm)
+dt$para.pls$wlr <- wlr_function(dt$para.pls$wl, dt$para.pls$wl, 10); nrow(dt$para.pls$wlr)
+dt$para.pls$wlm <- wlr_function_multi(dt$para.pls$wl, dt$para.pls$wl, 10); nrow(dt$para.pls$wlm)
 dt$para.pls$wl <- rbind.fill(dt$para.pls$wlm, dt$para.pls$wlr); nrow(dt$para.pls$wl); dt$para.pls$wlr <- NULL; dt$para.pls$wlm <- NULL
 dt$para.pls$ncomp <- 6
 
@@ -75,27 +76,33 @@ dt$pls$merge <- lapply(dt$pls$pred, function( x ) merge_pls(pls_pred = x, pls_lm
 dt$pls$merge <- lapply(dt$pls$merge, function( x ) x[ order(x$sd) , ])
 lapply(dt$pls$merge, head)
 
-if( length(dt$pls$merge) > 1){ dt$pls$mergesite <- merge_pls_site(merge_pls_lm_predict_ls = dt$pls$merge, number = 2000, ncomp = dt$para.pls$ncomp)
-head(dt$pls$mergesite)} else{ dt$pls$mergesite <- dt$pls$merge[[1]]}
-
+if( length(dt$pls$merge) > 1){ 
+  dt$pls$mergesite <- merge_pls_site(merge_pls_lm_predict_ls = dt$pls$merge, number = 2000, ncomp = dt$para.pls$ncomp)
+  head(dt$pls$mergesite)} else{ 
+  dt$pls$mergesite <- dt$pls$merge[[1]]
+  head(dt$pls$mergesite)}
+  
 # Prediciton lin ####
 dt$pls$pred.lin <- produktion_prediction(csv_transfered = dt$lin$trs, pls_function_obj = dt$pls$pls, ncomp = dt$para.pls$ncomp)
 
 # Lin
-dt$lin$diff <- print( diff ( range(dt$lin$trs$data$Dilution * dt$para$SOLL[dt$para$i] / 100) ) )
+dt$lin$diff <- print( diff ( range(dt$lin$trs$data[ , grep( dt$para$substance[ dt$para$i ], colnames( dt$lin$trs$data ))]) ) )
 
 dt$pls$lin <- linearitaet_filter( linearitaet_prediction =  dt$pls$pred.lin$prediction
                                   , ncomp = dt$para.pls$ncomp
                                   , linearitaet_limit_1 = dt$lin$diff * .90
                                   , linearitaet_limit_2 = dt$lin$diff * 1.1
                                   , R_2 = .75
-                                  , SOLL = dt$lin$trs$data$Dilution * dt$para$SOLL[dt$para$i] / 100
+                                  , SOLL = dt$lin$trs$data[ , grep( dt$para$substance[ dt$para$i ], colnames( dt$lin$trs$data ))]
                                   , pls_merge = dt$pls$mergesite )
 
 dat1 <- merge.data.frame(dt$pls$lin, dt$pls$mergesite)
-head( dat1[order(dat1$sd, decreasing = F) , ] )
-head( dat1[order(dat1$mad, decreasing = F) , ] )
-head(dt$pls$lin[ dt$pls$lin$spc != "spc" , ])
+dat1 <- dat1[order(dat1$sd, decreasing = F) , ]
+head(dat1)
+dat1 <- dat1[order(dat1$mad, decreasing = F) , ]
+head(dat1)
+dat1 <- dat1[dat1$spc != "spc" , ]
+head(dat1)
 
 # Prediciton ####
 dt$mop$ncomp <- 2
@@ -127,7 +134,7 @@ dt$mop$pred.lin <- pred_of_new_model(dt$model.raw
 dt$mop$pred <- lapply(dt$mop$pred, function( x ) as.numeric(ma( x, 5)))
 dt$mop$bias <- lapply(dt$mop$pred, function( x ) round( bias( median( x, na.rm = T), 0, dt$para$SOLL[ dt$para$i] ), 3))
 dt$mop$bias
-dt$mop$bias.lin <- round( bias( median( dt$mop$pred.lin, na.rm = T), 0, median(dt$lin$trs$data$Dilution * dt$para$SOLL[dt$para$i] / 100) ), 3)
+dt$mop$bias.lin <- round( bias( median( dt$mop$pred.lin, na.rm = T), 0, median(dt$lin$trs$data[ , grep( dt$para$substance[ dt$para$i ], colnames( dt$lin$trs$data ))]) ), 3)
 dt$mop$bias.lin
 dt$mop$pred <- mapply( function( x,y ) x - y
                        , x = dt$mop$pred
@@ -140,7 +147,7 @@ plot(dt$mop$pred.lin
      , xlab = "", ylab = dt$para$ylab[ dt$para$i ], main = dt$para$txt$loc.line[ i ]
      , ylim = dt$para$SOLL[ dt$para$i] * c(85, 105) / 100, axes = T
      , sub = paste("Bias =", dt$mop$bias[ i ]))
-points(dt$lin$trs$data$Dilution * dt$para$SOLL[dt$para$i] / 100, col = "red")
+points(dt$lin$trs$data[ , grep( dt$para$substance[ dt$para$i ], colnames( dt$lin$trs$data ))], col = "red")
 
 par(mfrow = c(length( dt$mop$pred ), 1))
 for(i in 1:length(dt$mop$pred)){

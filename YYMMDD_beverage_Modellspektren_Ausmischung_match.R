@@ -1,10 +1,10 @@
 # beverage parameter ####
 setwd(this.path::this.dir())
 dir( pattern = "_mtx_" )
-source.file <- print(dir( pattern = "_mtx_" )[ length( dir( pattern = "_mtx_" ))])
+source.file <- "Rsource_Max_Cherry_mtx_mop_val_V01.R"
 source( paste0(getwd(), "/", source.file) )
 
-Acid <- T # Acid column in MTX file ?
+Acid <- "NaOH" # NA, NaOH or Total
 
 # read in data ####
 setwd(dt$wd)
@@ -19,9 +19,10 @@ setwd("..")
 require(openxlsx)
 
 dir( pattern = "Q-xx-MTX-")
-dt$qxxmtx1 <- "Q-xx-MTX-00024-V01-00_Max_Lemon.xlsx"
+dt$qxxmtx1 <- "Q-xx-MTX-00019-V01-0_Max_Cherry.xlsx"
 
 istprozent1 <- openxlsx::read.xlsx(dt$qxxmtx1, sheet = "p_IST_g")
+
 istprozent <- istprozent1
 istprozent <- istprozent[ !is.na(istprozent$Acesulfam) , ]
 
@@ -29,16 +30,21 @@ istprozent[ , "Coffein"][ istprozent[ , "SK"] > 100] <- istprozent[ , "SK"][ ist
 istprozent
 names(istprozent)[1] <- "Probe_Anteil"
 
-if( Acid == T){
+if( Acid == "NaOH" | Acid == "Total"){
+  
   Acid1 <- openxlsx::read.xlsx(dt$qxxmtx1, sheet = "SA")
-  Acid1 <- Acid1[ , c("X1", "Total.Acid.(Labor)") ]
+  Acid1 <- Acid1[ , c(grep("X1", colnames(Acid1)), grep(Acid, colnames(Acid1))) ]
   Acid1 <- Acid1[ -1, ]
+  
+  if(Acid == "NaOH") Acid1[ , 2] <- as.numeric(Acid1[ , 2]) * 10
+  
   FG <- Acid1[ Acid1$X1 == "FG" , ]
   Acid1 <- Acid1[ !is.na(as.numeric( substr(Acid1$X1, nchar( Acid1$X1 ) - 2, nchar( Acid1$X1 ) - 2) )) , ]
-
-  Acid1 <- Acid1[ Acid1$Total != 0 , ]
+  Acid1 <- Acid1[ Acid1[ , 2 ] != 0 , ]
+  Acid1 <- Acid1[ !is.na(Acid1[ , 2 ]) , ]
+  
   Acid1 <- rbind(Acid1, FG)
-  istprozent <- cbind(istprozent, TA = as.numeric(c(Acid1$Total)))
+  istprozent <- cbind(istprozent, TA = as.numeric(c(Acid1[ , 2])))
 }
 
 # Model parameter ####
@@ -122,17 +128,17 @@ istprozent$Probe_Anteil[ grep(paste("FG"), istprozent$Probe_Anteil) ] <- paste0(
 
 # for(i in 1:length(unique(dt$model$para))){
 for(i in 1:length(unique(dt$model$para))){
-
+  
   para_prozent <- gsub(" ", "", gsub("_", ",", gsub("%", "", gsub(unique(dt$model$para)[i], "", istprozent[ , 1][ grep( paste0(unique(dt$model$para)[i], " ") , istprozent[ , 1]) ]))))
-
+  
   para_prozent_flag <- formatC(as.numeric(para_prozent), width = 2, format = "d", flag = "0")
-
+  
   for(j in 1:length(para_prozent)){
-
+    
     mea_s_spc$Probe_Anteil[ grep( paste0("_", unique(dt$model$para)[i], "_", para_prozent[j]), mea_s_spc$files_spc)] <- paste0( unique(dt$model$para)[i], "_", para_prozent_flag[j], "%")
-
+    
     istprozent$Probe_Anteil[ grep(paste(unique(dt$model$para)[i], para_prozent[j], "%"), istprozent$Probe_Anteil) ] <- paste0(unique(dt$model$para)[i], "_", para_prozent_flag[j], "%")
-
+    
   }
 }
 
