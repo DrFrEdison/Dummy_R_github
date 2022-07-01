@@ -212,7 +212,7 @@ fwrite(x = cbind(dt$model.raw$data, dt$model.raw$spc)
                               , dt$para$substance[ dt$para$i ]
                               , paste0("LG", as.character(dt_customer[ dt_customer$location == as.character(dt$para$location), "LG"][1]))
                               , sep = "_"), ".csv")
-       , sep = ";", dec = ".", na = NA)
+       , sep = ";", dec = ",", na = NA)
 setwd(dt$wd.git)
 
 
