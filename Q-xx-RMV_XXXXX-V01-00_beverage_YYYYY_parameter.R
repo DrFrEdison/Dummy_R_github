@@ -80,8 +80,8 @@ for(i in 1:length(dt$pred)){
        , sub = paste("Bias =", dt$bias[ i ]))
   xaxisdate(dt$trs[[ i ]]$data$datetime)
   abline( h = dt$para$SOLL[ dt$para$i ], col = "darkgreen", lty = 3, lwd = 1.5)
-  abline( h = dt$para$SOLL[ dt$para$i ] + dt$para$eingriff[ dt$para$i ] * c(1, -1), col = "orange", lty = 3, lwd = 1.5)
-  # abline( h = dt$para$SOLL[ dt$para$i ] + dt$para$sperr[ dt$para$i ] * c(1, -1), col = "red", lty = 3, lwd = 1.5)
+  abline( h = unlist( dt$para$eingriff[ dt$para$i ]), col = "orange", lty = 3, lwd = 1.5)
+  # abline( h = unlist(dt$para$sperr[ dt$para$i ]), col = "red", lty = 3, lwd = 1.5)
 }
 
 # Export for damn xlsx ####
