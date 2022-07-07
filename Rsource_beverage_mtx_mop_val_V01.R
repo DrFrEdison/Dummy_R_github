@@ -8,7 +8,7 @@ dt <- list()
 dt$para$customer = "PepsiCo"
 dt$para$beverage = "Max_Lemon"
 
-setwd(paste0(dt$wd <- paste0(wd$fe[[ grep(dt$para$customer, names(wd$fe)) ]]$Mastermodelle, dt$para$beverage)))
+setwd(paste0(dt$wd <- paste0(r4dt::wd$fe[[ grep(dt$para$customer, names(r4dt::wd$fe)) ]]$Mastermodelle, dt$para$beverage)))
 setwd( print( this.path::this.dir() ) )
 dt$wd.git <- print( getwd() )
 
