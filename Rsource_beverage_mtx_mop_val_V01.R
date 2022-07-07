@@ -62,7 +62,7 @@ setwd("./Modellerstellung")
 setwd(paste0("./", dt$para$model.raw.date[1], "_", dt$para$model.raw.pl[1]))
 setwd("./csv")
 
-dt$model.raw <- read.csv2( print(grep( "match.csv", dir(), value = T)), dec = ",", sep = ";")
+dt$model.raw <- read.csv2( print(grep( "Modellspektren_Ausmischung_match.csv", dir(), value = T)), dec = ",", sep = ";")
 head10(dt$model.raw)
 
 for(i in 1:length(dt$para$substance)){

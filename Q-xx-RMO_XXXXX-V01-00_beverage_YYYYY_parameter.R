@@ -131,7 +131,10 @@ dt$mop$pred.lin <- pred_of_new_model(dt$model.raw
                                      , dt$mop$spc
                                      , dt$lin$trs)
 
-dt$mop$pred <- lapply(dt$mop$pred, function( x ) as.numeric(ma( x, 5)))
+dt$mop$pred <- mapply(function( pred, date ) ma.date( x = pred, time = date$datetime)
+                      , pred = dt$mop$pred
+                      , date = dt$raw
+                      , SIMPLIFY = F)
 dt$mop$bias <- lapply(dt$mop$pred, function( x ) round( bias( median( x, na.rm = T), 0, dt$para$SOLL[ dt$para$i] ), 3))
 dt$mop$bias
 dt$mop$bias.lin <- round( bias( median( dt$mop$pred.lin, na.rm = T), 0, median(dt$lin$trs$data[ , grep( dt$para$substance[ dt$para$i ], colnames( dt$lin$trs$data ))]) ), 3)
@@ -163,9 +166,13 @@ for(i in 1:length(dt$mop$pred)){
 keep.out.unsb(model = dt$model.raw, dt$mop$wl1, dt$mop$wl2, dt$mop$wl3, dt$mop$wl4)
 
 # write to model data
-model_parameter_write(dt$para$customer, NA, NA, dt$para$beverage, dt$para$substance[ dt$para$i ]
-                      , NA
-                      , dt$mop$ncomp
-                      , dt$mop$wl1, dt$mop$wl2, dt$mop$wl3, dt$mop$wl4
-                      , dt$mop$spc)
+model_parameter_write(customer = dt$para$customer
+                      , location = NA
+                      , line = NA
+                      , beverage = dt$para$beverage
+                      , substance = dt$para$substance[ dt$para$i ]
+                      , LG = NA
+                      , ncomp = dt$mop$ncomp
+                      , wl1 = dt$mop$wl1, wl2 = dt$mop$wl2, wl3 = dt$mop$wl3, wl4 = dt$mop$wl4
+                      , spc = dt$mop$spc)
 setwd(dt$wd.git)
