@@ -114,8 +114,8 @@ mea_s_spc <- cbind(Probe=NA, Probe_Anteil = NA, mea_s_spc)
 # Probe
 mea_s_spc$Probe[grep("_SL_",mea_s_spc$files_spc)] <- "SL"
 
-for(i in 1:length(unique(dt$model$para)))
-  mea_s_spc$Probe[ grep( paste0( "_", dt$model$para[i], "_") , mea_s_spc$files_spc) ] <- dt$model$para[i]
+for(i in 1:length(unique(dt$model.para)))
+  mea_s_spc$Probe[ grep( paste0( "_", dt$model.para[i], "_") , mea_s_spc$files_spc) ] <- dt$model.para[i]
 
 mea_s_spc$Probe[grep("FG",mea_s_spc$files_spc)] <- "FG"
 
@@ -126,18 +126,18 @@ mea_s_spc$Probe
 mea_s_spc$Probe_Anteil[grep("_FG_",mea_s_spc$files_spc)] <- "FG_100%"
 istprozent$Probe_Anteil[ grep(paste("FG"), istprozent$Probe_Anteil) ] <- paste0("FG", "_100%")
 
-# for(i in 1:length(unique(dt$model$para))){
-for(i in 1:length(unique(dt$model$para))){
+# for(i in 1:length(unique(dt$model.para))){
+for(i in 1:length(unique(dt$model.para))){
 
-  para_prozent <- gsub(" ", "", gsub("_", ",", gsub("%", "", gsub(unique(dt$model$para)[i], "", istprozent[ , 1][ grep( paste0(unique(dt$model$para)[i], " ") , istprozent[ , 1]) ]))))
+  para_prozent <- gsub(" ", "", gsub("_", ",", gsub("%", "", gsub(unique(dt$model.para)[i], "", istprozent[ , 1][ grep( paste0(unique(dt$model.para)[i], " ") , istprozent[ , 1]) ]))))
 
   para_prozent_flag <- formatC(as.numeric(para_prozent), width = 2, format = "d", flag = "0")
 
   for(j in 1:length(para_prozent)){
 
-    mea_s_spc$Probe_Anteil[ grep( paste0("_", unique(dt$model$para)[i], "_", para_prozent[j]), mea_s_spc$files_spc)] <- paste0( unique(dt$model$para)[i], "_", para_prozent_flag[j], "%")
+    mea_s_spc$Probe_Anteil[ grep( paste0("_", unique(dt$model.para)[i], "_", para_prozent[j]), mea_s_spc$files_spc)] <- paste0( unique(dt$model.para)[i], "_", para_prozent_flag[j], "%")
 
-    istprozent$Probe_Anteil[ grep(paste(unique(dt$model$para)[i], para_prozent[j], "%"), istprozent$Probe_Anteil) ] <- paste0(unique(dt$model$para)[i], "_", para_prozent_flag[j], "%")
+    istprozent$Probe_Anteil[ grep(paste(unique(dt$model.para)[i], para_prozent[j], "%"), istprozent$Probe_Anteil) ] <- paste0(unique(dt$model.para)[i], "_", para_prozent_flag[j], "%")
 
   }
 }
@@ -165,4 +165,4 @@ setwd(dt$wd.valset)
 setwd("..")
 setwd("./csv")
 
-write.csv2(istprozentmeaspc, paste0(dt$para$model.raw.date[1], "_", dt$para$model.raw.pl[1], "_", dt$para$beverage, "_Modellspektren_Ausmischung_match.csv"), row.names = F)
+write.csv2(istprozentmeaspc, paste0(dt$para$model.raw.date[1], "_", dt$para$model.raw.pl[1], "_", dt$para$beverage, "_VASspektren_Ausmischung_match.csv"), row.names = F)

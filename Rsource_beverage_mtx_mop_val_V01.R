@@ -73,6 +73,19 @@ for(i in 1:length(dt$para$substance)){
 dt$SL <- dt$model.raw[which(dt$model.raw$Probe_Anteil == "SL") , ]
 dt$model.raw <- dt$model.raw[which(dt$model.raw$Probe_Anteil != "SL") , ]
 
+# VAS
+setwd(dt$wd)
+setwd("./Modellerstellung")
+setwd(paste0("./", dt$para$model.raw.date[1], "_", dt$para$model.raw.pl[1]))
+setwd("./csv")
+
+dt$vas$raw <- read.csv2( print(grep( "VASspektren_Ausmischung_match", dir(), value = T)), dec = ",", sep = ";")
+
+for(i in 1:length(dt$para$substance)){
+  if(dt$para$substance[i] == "TA" | dt$para$substance[i] == "TTA" | dt$para$substance[i] == "Acid") next
+  dt$vas$raw[ , colnames(dt$vas$raw) %in% dt$para$substance[i]] <- dt$vas$raw[ , colnames(dt$vas$raw) %in% dt$para$substance[i]] * dt$para$SOLL[i] / 100
+}
+
 # Modellvalidierung ####
 # dir( paste0( dt$wd, "/", "/Modellvalidierung") )
 # dt$para$val.date <- "220524"
