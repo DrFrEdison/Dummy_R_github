@@ -25,18 +25,10 @@ dt$para$files <- dir(pattern = "validated.csv$")
 dt$para$txt <- txt.file(dt$para$files)
 
 dt$raw <- lapply(dt$para$files, \(x) freadr4dt(x))
-names(dt$raw) <- dt$para$txt$type
+names(dt$raw) <- dt$para$txt$loc.line
 
 dt$para$trs <- lapply(dt$raw, transfer_csv.num.col)
 dt$trs <- lapply(dt$raw, transfer_csv)
-
-# Modellmatrix ####
-setwd(dt$wd)
-setwd("./Modellvalidierung")
-dir.create(paste0("./", dt$para$val.date, "_", dt$para$model.raw.pl[1], "_", dt$para$substance[dt$para$i]), showWarnings = F)
-setwd(paste0("./", dt$para$val.date, "_", dt$para$model.raw.pl[1], "_", dt$para$substance[dt$para$i]))
-dir.create("Modellmatrix", showWarnings = F)
-setwd("./Modellmatrix")
 
 # Prediction
 dt$pred <- lapply(dt$trs, function( x ) use_model_on_device(customer = dt$para$customer
