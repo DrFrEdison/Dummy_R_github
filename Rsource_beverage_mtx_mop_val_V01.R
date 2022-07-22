@@ -56,6 +56,19 @@ dt$para$sperr <- data.frame( TA = c(NA, NA)
 dir( paste0( dt$wd, "/", "/Modelloptimierung") )
 dt$para$mop.date <- "220617"
 
+for(i in 1 : length(dt$para$substance)){
+  ID <- 39
+setwd( dt$wd.git )
+file.copy(grep("Q-xx-RMO_", dir(), value = T)
+          , gsub("parameter", dt$para$substance[i]
+                 , gsub("YYYYY", dt$para$model.raw.pl
+                        ,  gsub("beverage", dt$para$beverage
+                                , gsub("XXXXX", formatC(ID + i - 1, digits = 5, flag = "0")
+                                       , grep("Q-xx-RMO_", dir(dt$wd.git), value = T))))), overwrite = F)
+}
+rm(ID)
+file.remove(grep("Q-xx-RMO_XXXXX", dir(), value = T))
+
 # Model Matrix Ausmischung ####
 setwd(dt$wd)
 setwd("./Modellerstellung")
@@ -90,6 +103,20 @@ for(i in 1:length(dt$para$substance)){
 # dir( paste0( dt$wd, "/", "/Modellvalidierung") )
 # dt$para$val.date <- "220524"
 #
+
+# for(i in 1 : length(dt$para$substance)){
+#   ID <- 39
+# setwd( dt$wd.git )
+# file.copy(grep("Q-xx-RMO_", dir(), value = T)
+#           , gsub("parameter", dt$para$substance[i]
+#                  , gsub("YYYYY", dt$para$model.raw.pl
+#                         ,  gsub("beverage", dt$para$beverage
+#                                 , gsub("XXXXX", formatC(ID + i - 1, digits = 5, flag = "0")
+#                                        , grep("Q-xx-RMO_", dir(dt$wd.git), value = T))))), overwrite = F)
+# }
+# rm(ID)
+# file.remove(grep("Q-xx-RMO_XXXXX", dir(), value = T))
+
 # # Linearity
 # setwd(dt$wd)
 # setwd("./Modellvalidierung")
